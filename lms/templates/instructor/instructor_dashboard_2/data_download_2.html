@@ -63,16 +63,17 @@ from openedx.core.djangolib.markup import HTML, Text
     </p>
   </div>
   <div class="card">
-    <h3 class="hd hd-3">${_("Grade Reports")}</h3>
-    <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
-      <p class="grid" style="align-self: end">
-          <select>
+      <h3 class="hd hd-3">${_("Grade Reports")}</h3>
+      <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
+      <div style="margin-bottom: 10px">
+          <select style="width:100%">
               <option>Course Report: Verified Learners Only</option>
               <option>Course Report: All Learners</option>
               <option>Problem Report: Verified Learners Only</option>
               <option>Problem Report: All Learners</option>
           </select>
-      </p>
+      </div>
+
       <p class="grid"><input type="button" name="issued-certificates-csv" value="${_("Generate CSV")}" data-csv="true" data-endpoint="${ section_data['get_issued_certificates_url'] }"></p>
   </div>
     <div class="card">
