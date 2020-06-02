@@ -8,7 +8,9 @@ from openedx.core.djangolib.markup import HTML, Text
 <div class="data-download-grid-container">
     <div class="card">
     <h3 class="hd hd-3">${_("Grading Configuration")}</h3>
-    <p>${_("Click to display the grading configuration for the course. The grading configuration is the breakdown of graded subsections of the course (such as exams and problem sets), and can be changed on the 'Grading' page (under 'Settings') in Studio.")}</p>
+    <p>${_("Click to display the grading configuration for the course. The grading configuration is the \
+        breakdown of graded subsections of the course (such as exams and problem sets), and can be changed on the \
+        'Grading' page (under 'Settings') in Studio.")}</p>
     <p class="grid"><input type="button" name="dump-gradeconf" value="${_("Grading Configuration")}" data-endpoint="${ section_data['get_grading_config_url'] }"></p>
   </div>
   <div class="card">
@@ -33,6 +35,18 @@ from openedx.core.djangolib.markup import HTML, Text
   </div>
     <div class="card">
       <h3 class="hd hd-3">${_("Student Answers")}</h3>
+            <p>
+      <div class="problems">
+        ${static.renderReact(
+          component="ProblemBrowser",
+          id="react-block-listing",
+          props={
+            "courseId": course.id,
+            "excludeBlockTypes": ['html', 'video', 'discussion']
+          }
+        )}
+      </div>
+    </p>
       <p>
           ${_("Select a problem to generate a CSV file that lists all student answers to the problem. You also select a section or chapter to include results of all problems in that section or chapter.")}
           <% max_entries = settings.FEATURES.get('MAX_PROBLEM_RESPONSES_COUNT') %>
@@ -226,3 +240,5 @@ from openedx.core.djangolib.markup import HTML, Text
     </div>
     <div class="no-pending-tasks-message"></div>
   </div>
+
+
