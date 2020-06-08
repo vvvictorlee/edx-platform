@@ -17,13 +17,13 @@
     };
 
     DataDownloadCertificate = (function() {
-        function InstructorDashboardDataDownloadCertificate($container) {
+        function InstructorDashboardDataDownloadCertificate() {
             var dataDownloadCert = this;
-            this.$container = $container;
+            // this.$container = $container;
             this.$list_issued_certificate_table_btn = this.$container.find("input[name='issued-certificates-list']");
             this.$list_issued_certificate_csv_btn = this.$container.find("input[name='issued-certificates-csv']");
-            this.$certificate_display_table = this.$container.find('.certificate-data-display-table');
-            this.$certificates_request_err = this.$container.find('.issued-certificates-error.request-response-error');
+            this.$certificate_display_table = $('.certificate-data-display-table');
+            this.$certificates_request_err = $('.issued-certificates-error.request-response-error');
             this.$list_issued_certificate_table_btn.click(function() {
                 var url = dataDownloadCert.$list_issued_certificate_table_btn.data('endpoint');
                 dataDownloadCert.clear_ui();
@@ -94,34 +94,63 @@
             var dataDownloadObj = this;
             this.$section = $section;
             this.$section.data('wrapper', this);
-            this.ddc = new DataDownloadCertificate(this.$section.find('.issued_certificates'));
-            this.$list_studs_btn = this.$section.find("input[name='list-profiles']");
-            this.$list_studs_csv_btn = this.$section.find("input[name='list-profiles-csv']");
-            this.$proctored_exam_csv_btn = this.$section.find("input[name='proctored-exam-results-report']");
-            this.$survey_results_csv_btn = this.$section.find("input[name='survey-results-report']");
-            this.$list_may_enroll_csv_btn = this.$section.find("input[name='list-may-enroll-csv']");
+            this.ddc = new DataDownloadCertificate();
+
+            // this.$list_studs_btn = this.$section.find("input[name='list-profiles']");
+            // this.$list_studs_csv_btn = this.$section.find("input[name='list-profiles-csv']");
+            // this.$proctored_exam_csv_btn = this.$section.find("input[name='proctored-exam-results-report']");
+            // this.$survey_results_csv_btn = this.$section.find("input[name='survey-results-report']");
+            // this.$list_may_enroll_csv_btn = this.$section.find("input[name='list-may-enroll-csv']");
             this.$list_problem_responses_csv_input = this.$section.find("input[name='problem-location']");
-            this.$list_problem_responses_csv_btn = this.$section.find("input[name='list-problem-responses-csv']");
-            this.$list_anon_btn = this.$section.find("input[name='list-anon-ids']");
-            this.$grade_config_btn = this.$section.find("input[name='dump-gradeconf']");
-            this.$calculate_grades_csv_btn = this.$section.find("input[name='calculate-grades-csv']");
-            this.$problem_grade_report_csv_btn = this.$section.find("input[name='problem-grade-report']");
-            this.$async_report_btn = this.$section.find("input[class='async-report-btn']");
+            // this.$list_problem_responses_csv_btn = this.$section.find("input[name='list-problem-responses-csv']");
+            // this.$list_anon_btn = this.$section.find("input[name='list-anon-ids']");
+            // this.$grade_config_btn = this.$section.find("input[name='dump-gradeconf']");
+            // this.$calculate_grades_csv_btn = this.$section.find("input[name='calculate-grades-csv']");
+            // this.$problem_grade_report_csv_btn = this.$section.find("input[name='problem-grade-report']");
+            // this.$async_report_btn = this.$section.find("input[class='async-report-btn']");
+
             this.$download = this.$section.find('.data-download-container');
             this.$download_display_text = this.$download.find('.data-display-text');
             this.$download_request_response_error = this.$download.find('.request-response-error');
-            this.$reports = this.$section.find('.reports-download-container');
-            this.$download_display_table = this.$reports.find('.profile-data-display-table');
-            this.$reports_request_response = this.$reports.find('.request-response');
-            this.$reports_request_response_error = this.$reports.find('.request-response-error');
+            // this.$reports = this.$section.find('.reports-download-container');
+            this.$download_display_table = $('.profile-data-display-table');
+            this.$reports_request_response = $('.request-response');
+            this.$reports_request_response_error = $('.request-response-error');
             this.report_downloads = new (ReportDownloads())(this.$section);
             this.instructor_tasks = new (PendingInstructorTasks())(this.$section);
             this.clear_display();
-            this.$list_anon_btn.click(function() {
-                location.href = dataDownloadObj.$list_anon_btn.data('endpoint');
+            this.$download_report = $('#download-report');
+            this.$report_type_selector = $('#report-type');
+            this.$selection_informations = $('.selectionInfo');
+
+            this.$report_type_selector.change(function() {
+                var selectedOption = dataDownloadObj.$report_type_selector.val();
+                var $option = dataDownloadObj.$report_type_selector.find('option:selected');
+                if ($option.data('graderelated') === true) {
+                    $('.grade-related').show();
+                } else if ($option.data('problemrelated') === true) {
+                    $('.problem-related').show();
+                } else {
+                    $('.grade-related').hide();
+                    $('.problem-related').hide();
+                }
+                dataDownloadObj.$selection_informations.each(function(index, ele) {
+                    if ($(ele).hasClass(selectedOption)) {
+                        $(ele).show();
+                    } else {
+                        $(ele).hide();
+                    }
+                });
             });
-            this.$proctored_exam_csv_btn.click(function() {
-                var url = dataDownloadObj.$proctored_exam_csv_btn.data('endpoint');
+            this.$download_report.click(function() {
+                var selectedOption = dataDownloadObj.$report_type_selector.find('option:selected');
+                dataDownloadObj[dataDownloadObj.$report_type_selector.val()](selectedOption);
+            });
+            this.listAnonymizeStudentIDs = function(select) {
+                location.href = select.data('endpoint');
+            };
+            this.proctoredExamResults = function(selected) {
+                var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating proctored exam results. Please try again.');
                 return $.ajax({
                     type: 'POST',
@@ -145,9 +174,10 @@
                         });
                     }
                 });
-            });
-            this.$survey_results_csv_btn.click(function() {
-                var url = dataDownloadObj.$survey_results_csv_btn.data('endpoint');
+            };
+
+            this.surveyResultReport = function(selected) {
+                var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating survey results. Please try again.');
                 return $.ajax({
                     type: 'POST',
@@ -171,9 +201,9 @@
                         });
                     }
                 });
-            });
-            this.$list_studs_csv_btn.click(function() {
-                var url = dataDownloadObj.$list_studs_csv_btn.data('endpoint') + '/csv';
+            };
+            this.profileInformation = function(selected) {
+                var url = selected.data('endpoint') + '/csv';
                 var errorMessage = gettext('Error generating student profile information. Please try again.');
                 dataDownloadObj.clear_display();
                 return $.ajax({
@@ -196,9 +226,9 @@
                         });
                     }
                 });
-            });
-            this.$list_studs_btn.click(function() {
-                var url = dataDownloadObj.$list_studs_btn.data('endpoint');
+            };
+            this.profileInformation = function(selected) {
+                var url = selected.data('endpoint');
                 dataDownloadObj.clear_display();
                 dataDownloadObj.$download_display_table.text(gettext('Loading'));
                 return $.ajax({
@@ -245,9 +275,9 @@
                         return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
                     }
                 });
-            });
-            this.$list_problem_responses_csv_btn.click(function() {
-                var url = dataDownloadObj.$list_problem_responses_csv_btn.data('endpoint');
+            };
+            this.problemResponses = function(selected) {
+                var url = selected.data('endpoint');
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',
@@ -271,9 +301,9 @@
                         });
                     }
                 });
-            });
-            this.$list_may_enroll_csv_btn.click(function() {
-                var url = dataDownloadObj.$list_may_enroll_csv_btn.data('endpoint');
+            };
+            this.learnerWhoCanEnroll = function(selected) {
+                var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating list of students who may enroll. Please try again.');
                 dataDownloadObj.clear_display();
                 return $.ajax({
@@ -296,9 +326,9 @@
                         });
                     }
                 });
-            });
-            this.$grade_config_btn.click(function() {
-                var url = dataDownloadObj.$grade_config_btn.data('endpoint');
+            };
+            this.gradingConfiguration = function(selected) {
+                var url = selected.data('endpoint');
                 return $.ajax({
                     type: 'POST',
                     dataType: 'json',
@@ -318,10 +348,22 @@
                             dataDownloadObj.$download_display_text, edx.HtmlUtils.HTML(data.grading_config_summary));
                     }
                 });
-            });
-            this.$async_report_btn.click(function(e) {
-                var url = $(e.target).data('endpoint');
-                var errorMessage = '';
+            };
+            this.gradeReport = function(selected) {
+                var errorMessage = gettext('Error generating grades. Please try again.');
+                dataDownloadObj.downloadCSV(selected, errorMessage);
+            };
+            this.problemGradeReport = function(selected) {
+                var errorMessage = gettext('Error generating problem grade report. Please try again.');
+                dataDownloadObj.downloadCSV(selected, errorMessage);
+            };
+            this.ORADataReport = function(selected) {
+                var errorMessage = gettext('Error generating ORA data report. Please try again.');
+                dataDownloadObj.downloadCSV(selected, errorMessage);
+            };
+            this.downloadCSV = function(selected, errorMessage) {
+                var url = selected.data('endpoint');
+                // var errorMessage = '';
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',
@@ -329,13 +371,8 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
+                          // eslint-disable-next-line no-param-reassign
                             errorMessage = JSON.parse(error.responseText);
-                        } else if (e.target.name === 'calculate-grades-csv') {
-                            errorMessage = gettext('Error generating grades. Please try again.');
-                        } else if (e.target.name === 'problem-grade-report') {
-                            errorMessage = gettext('Error generating problem grade report. Please try again.');
-                        } else if (e.target.name === 'export-ora2-data') {
-                            errorMessage = gettext('Error generating ORA data report. Please try again.');
                         }
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
                         return dataDownloadObj.$reports_request_response_error.css({
@@ -349,7 +386,7 @@
                         });
                     }
                 });
-            });
+            };
         }
 
         InstructorDashboardDataDownload.prototype.onClickTitle = function() {
