@@ -337,7 +337,6 @@ def reset_student_attempts(course_id, student, module_state_key, requesting_user
         _reset_or_delete_module(module_to_reset)
 
 
-
 def _reset_module_attempts(studentmodule):
     """
     Reset the number of attempts on a studentmodule.
