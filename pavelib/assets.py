@@ -648,9 +648,9 @@ def process_npm_assets():
 
 
 @task
-@needs(
-    'pavelib.prereqs.install_python_prereqs',
-)
+# @needs(
+#     'pavelib.prereqs.install_python_prereqs',
+# )
 @no_help
 def process_xmodule_assets():
     """

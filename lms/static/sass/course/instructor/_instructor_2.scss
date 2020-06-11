@@ -313,6 +313,9 @@
       }
     }
   }
+    .data-download-nav {
+        @extend .instructor-nav
+    }
 }
 
 // elements - general

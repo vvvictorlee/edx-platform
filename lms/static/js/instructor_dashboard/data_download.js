@@ -2,7 +2,7 @@
 
 (function() {
     'use strict';
-    var DataDownload, DataDownloadCertificate, PendingInstructorTasks, ReportDownloads, statusAjaxError;
+    var DataDownload, PendingInstructorTasks, ReportDownloads, statusAjaxError;
 
     statusAjaxError = function() {
         return window.InstructorDashboard.util.statusAjaxError.apply(this, arguments);
@@ -16,33 +16,117 @@
         return window.InstructorDashboard.util.ReportDownloads;
     };
 
-    DataDownloadCertificate = (function() {
-        function InstructorDashboardDataDownloadCertificate() {
-            var dataDownloadCert = this;
-            // this.$container = $container;
-            this.$list_issued_certificate_table_btn = this.$container.find("input[name='issued-certificates-list']");
-            this.$list_issued_certificate_csv_btn = this.$container.find("input[name='issued-certificates-csv']");
+    // DataDownloadCertificate = (function() {
+    //     function InstructorDashboardDataDownloadCertificate() {
+    //         var dataDownloadCert = this;
+    //         // this.$container = $container;
+    //         this.$list_issued_certificate_table_btn = this.$container.find("input[name='issued-certificates-list']");
+    //         this.$list_issued_certificate_csv_btn = this.$container.find("input[name='issued-certificates-csv']");
+    //
+    //
+    //     InstructorDashboardDataDownloadCertificate.prototype.clear_ui = function() {
+    //         this.$certificate_display_table.empty();
+    //         this.$certificates_request_err.empty();
+    //         return $('.issued-certificates-error.msg-error').css({
+    //             display: 'none'
+    //         });
+    //     };
+    //
+    //     return InstructorDashboardDataDownloadCertificate;
+    // }());
+
+    DataDownload = (function() {
+        function InstructorDashboardDataDownload($section) {
+            var dataDownloadObj = this;
+            this.$section = $section;
+            this.$section.data('wrapper', this);
+            // this.ddc = new DataDownloadCertificate();
+            this.$list_problem_responses_csv_input = this.$section.find("input[name='problem-location']");
+            // this.$download = this.$section.find('.data-download-container');
+            this.$download_display_text = $('.data-display-text');
+            this.$download_request_response_error = $('.request-response-error');
+            this.$download_display_table = $('.profile-data-display-table');
+            this.$reports_request_response = $('.request-response');
+            this.$reports_request_response_error = $('.request-response-error');
+            this.report_downloads = new (ReportDownloads())(this.$section);
+            this.instructor_tasks = new (PendingInstructorTasks())(this.$section);
+            this.clear_display();
+            this.$download_report = $('.download-report');
+            this.$report_type_selector = $('#report-type');
+            this.$selection_informations = $('.selectionInfo');
             this.$certificate_display_table = $('.certificate-data-display-table');
-            this.$certificates_request_err = $('.issued-certificates-error.request-response-error');
-            this.$list_issued_certificate_table_btn.click(function() {
-                var url = dataDownloadCert.$list_issued_certificate_table_btn.data('endpoint');
-                dataDownloadCert.clear_ui();
-                dataDownloadCert.$certificate_display_table.text(gettext('Loading data...'));
+            // this.$certificates_request_err = $('.issued-certificates-error.request-response-error');
+            // this.$grdingSsection = $('section #grading');
+            this.$downloadProblemReport = $('#download-problem-report');
+            // this.$certificateSection = $('section #certificate');
+            // this.$reportSection = $('section #reports');
+            this.$navButton = $('.data-download-nav .btn-link');
+            this.$selectedSection = $('#' + this.$navButton.first().attr('data-section'));
+
+            this.$navButton.click(function(event) {
+                event.preventDefault();
+                var selectedSection = '#' + $(this).attr('data-section');
+                $('.data-download-nav .btn-link').removeClass('active-section');
+                $('section.tab-data').hide();
+                $(selectedSection).show();
+                $(this).addClass('active-section');
+
+                $(this).find('select').trigger('change');
+                dataDownloadObj.$selectedSection = $(selectedSection);
+
+                dataDownloadObj.clear_display();
+            });
+
+            this.$navButton.first().click();
+
+            this.$report_type_selector.change(function() {
+                var selectedOption = dataDownloadObj.$report_type_selector.val();
+                // var $option = dataDownloadObj.$report_type_selector.find('option:selected');
+                // var $gradeRelated = $('.grade-related');
+                // var $problemRelated = $('.problem-related');
+                // if ($option.data('graderelated') === true) {
+                //     $gradeRelated.show();
+                // } else if ($option.data('problemrelated') === true) {
+                //     $problemRelated.show();
+                // } else {
+                //     $gradeRelated.hide();
+                //     // $problemRelated.hide();
+                // }
+                dataDownloadObj.$selection_informations.each(function(index, ele) {
+                    if ($(ele).hasClass(selectedOption)) {
+                        $(ele).show();
+                    } else {
+                        $(ele).hide();
+                    }
+                });
+            });
+            this.$download_report.click(function() {
+                // var selectedOption = dataDownloadObj.$report_type_selector.find('option:selected');
+                var selectedOption = dataDownloadObj.$selectedSection.find('select').find('option:selected');
+                dataDownloadObj[selectedOption.val()](selectedOption);
+            });
+
+            // ////////////////
+
+            this.viewCertificates = function(selected) {
+                var url = selected.data('endpoint');
+                // dataDownloadObj.clear_ui();
+                dataDownloadObj.$certificate_display_table.text(gettext('Loading data...'));
                 return $.ajax({
                     type: 'POST',
                     url: url,
                     error: function() {
-                        dataDownloadCert.clear_ui();
-                        dataDownloadCert.$certificates_request_err.text(
+                        // dataDownloadObj.clear_ui();
+                        dataDownloadObj.$download_request_response_error.text(
                             gettext('Error getting issued certificates list.')
                         );
-                        return $('.issued_certificates .issued-certificates-error.msg-error').css({
+                        return dataDownloadObj.$reports_request_response_error.css({
                             display: 'block'
                         });
                     },
                     success: function(data) {
                         var $tablePlaceholder, columns, feature, gridData, options;
-                        dataDownloadCert.clear_ui();
+                        // dataDownloadObj.clear_ui();
                         options = {
                             enableCellNavigation: true,
                             enableColumnReorder: false,
@@ -67,85 +151,19 @@
                         $tablePlaceholder = $('<div/>', {
                             class: 'slickgrid'
                         });
-                        dataDownloadCert.$certificate_display_table.append($tablePlaceholder);
+                        dataDownloadObj.$certificate_display_table.append($tablePlaceholder);
                         return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
                     }
                 });
-            });
-            this.$list_issued_certificate_csv_btn.click(function() {
-                dataDownloadCert.clear_ui();
-                location.href = dataDownloadCert.$list_issued_certificate_csv_btn.data('endpoint') + '?csv=true';
-            });
-        }
+            };
+            this.downloadCertificates = function(selected) {
+                // dataDownloadObj.clear_ui();
+                location.href = selected.data('endpoint') + '?csv=true';
+            };
 
-        InstructorDashboardDataDownloadCertificate.prototype.clear_ui = function() {
-            this.$certificate_display_table.empty();
-            this.$certificates_request_err.empty();
-            return $('.issued-certificates-error.msg-error').css({
-                display: 'none'
-            });
-        };
 
-        return InstructorDashboardDataDownloadCertificate;
-    }());
+            // //////////////////
 
-    DataDownload = (function() {
-        function InstructorDashboardDataDownload($section) {
-            var dataDownloadObj = this;
-            this.$section = $section;
-            this.$section.data('wrapper', this);
-            this.ddc = new DataDownloadCertificate();
-
-            // this.$list_studs_btn = this.$section.find("input[name='list-profiles']");
-            // this.$list_studs_csv_btn = this.$section.find("input[name='list-profiles-csv']");
-            // this.$proctored_exam_csv_btn = this.$section.find("input[name='proctored-exam-results-report']");
-            // this.$survey_results_csv_btn = this.$section.find("input[name='survey-results-report']");
-            // this.$list_may_enroll_csv_btn = this.$section.find("input[name='list-may-enroll-csv']");
-            this.$list_problem_responses_csv_input = this.$section.find("input[name='problem-location']");
-            // this.$list_problem_responses_csv_btn = this.$section.find("input[name='list-problem-responses-csv']");
-            // this.$list_anon_btn = this.$section.find("input[name='list-anon-ids']");
-            // this.$grade_config_btn = this.$section.find("input[name='dump-gradeconf']");
-            // this.$calculate_grades_csv_btn = this.$section.find("input[name='calculate-grades-csv']");
-            // this.$problem_grade_report_csv_btn = this.$section.find("input[name='problem-grade-report']");
-            // this.$async_report_btn = this.$section.find("input[class='async-report-btn']");
-
-            this.$download = this.$section.find('.data-download-container');
-            this.$download_display_text = this.$download.find('.data-display-text');
-            this.$download_request_response_error = this.$download.find('.request-response-error');
-            // this.$reports = this.$section.find('.reports-download-container');
-            this.$download_display_table = $('.profile-data-display-table');
-            this.$reports_request_response = $('.request-response');
-            this.$reports_request_response_error = $('.request-response-error');
-            this.report_downloads = new (ReportDownloads())(this.$section);
-            this.instructor_tasks = new (PendingInstructorTasks())(this.$section);
-            this.clear_display();
-            this.$download_report = $('#download-report');
-            this.$report_type_selector = $('#report-type');
-            this.$selection_informations = $('.selectionInfo');
-
-            this.$report_type_selector.change(function() {
-                var selectedOption = dataDownloadObj.$report_type_selector.val();
-                var $option = dataDownloadObj.$report_type_selector.find('option:selected');
-                if ($option.data('graderelated') === true) {
-                    $('.grade-related').show();
-                } else if ($option.data('problemrelated') === true) {
-                    $('.problem-related').show();
-                } else {
-                    $('.grade-related').hide();
-                    $('.problem-related').hide();
-                }
-                dataDownloadObj.$selection_informations.each(function(index, ele) {
-                    if ($(ele).hasClass(selectedOption)) {
-                        $(ele).show();
-                    } else {
-                        $(ele).hide();
-                    }
-                });
-            });
-            this.$download_report.click(function() {
-                var selectedOption = dataDownloadObj.$report_type_selector.find('option:selected');
-                dataDownloadObj[dataDownloadObj.$report_type_selector.val()](selectedOption);
-            });
             this.listAnonymizeStudentIDs = function(select) {
                 location.href = select.data('endpoint');
             };
@@ -227,7 +245,7 @@
                     }
                 });
             };
-            this.profileInformation = function(selected) {
+            this.listEnrolledPeople = function(selected) {
                 var url = selected.data('endpoint');
                 dataDownloadObj.clear_display();
                 dataDownloadObj.$download_display_table.text(gettext('Loading'));
@@ -276,8 +294,8 @@
                     }
                 });
             };
-            this.problemResponses = function(selected) {
-                var url = selected.data('endpoint');
+            this.$downloadProblemReport.click(function(event) {
+                var url = $(event.target).data('endpoint');
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',
@@ -301,7 +319,7 @@
                         });
                     }
                 });
-            };
+            });
             this.learnerWhoCanEnroll = function(selected) {
                 var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating list of students who may enroll. Please try again.');

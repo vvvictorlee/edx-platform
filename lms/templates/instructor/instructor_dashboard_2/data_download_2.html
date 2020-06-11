@@ -10,162 +10,256 @@ from openedx.core.djangolib.markup import HTML, Text
 <!--premissions python-->
 
 <style>
-    p{
+    p {
         line-height: 2;
     }
-    .override{
+
+    .override {
         width: 335px;
+    }
+    .download-report {
+        margin-left: 10px;
+    }
+
+    .data-download-container {
+        padding:15px;
+        width:50%;
+        border: grey 1px solid
     }
 
 </style>
-<div style="padding:15px;width:50%; border: #0ca3f5 1px solid" class="data-download-container action-type-container">
-<!--    <div class="request-response-error msg msg-error copy" id="data-request-response-error"></div>-->
 
-    <div >
 
-        <div style="margin-bottom: 5px">
-            <label for="report-type">Report type</label><br>
-            <select id="report-type"  style="width:315px;height: 34px">
-                <optgroup label="Others">
-                    <option value="gradingConfiguration" data-endpoint="${ section_data['get_grading_config_url'] }">
+<main id="main" aria-label="Content" tabindex="-1">
+
+
+</main>
+<div  class="data-download-container action-type-container">
+    <!--    <div class="request-response-error msg msg-error copy" id="data-request-response-error"></div>-->
+    <ul class="data-download-nav">
+
+        <li class="nav-item ">
+            <button type="button" class="btn-link reports  active-section" data-section="reports">Reports</button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn-link problem-report" data-section="problem">Problem Report</button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn-link certificates" data-section="certificates">Certificates</button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn-link grading" data-section="grading">Grading</button>
+        </li>
+
+    </ul>
+    <section id="reports" class="idash-section tab-data" aria-labelledby="header-reports">
+        <div>
+
+            <div class="mb-5">
+                <p style="margin-bottom: 15px">
+                    <strong>${_("NOTE")}: </strong>
+                    Please select the report type and then click Download Report button
+                </p>
+                <select id="report-type" style="width:315px;height: 44px">
+                    <option value="gradingConfiguration"
+                            data-endpoint="${ section_data['get_grading_config_url'] }">
                         Grading Configuration
                     </option>
                     <option value="listAnonymizeStudentIDs" data-endpoint="${ section_data['get_anon_ids_url'] }"
                             class="${'is-disabled' if disable_buttons else ''}"
                             aria-disabled="${'true' if disable_buttons else 'false'}">Anonymized Student IDs
                     </option>
-                    <option value="profileInformation" data-endpoint="${ section_data['get_students_features_url'] }"
+                    <option value="profileInformation"
+                            data-endpoint="${ section_data['get_students_features_url'] }"
                             data-csv="true">Profile Information
                     </option>
                     <option value="learnerWhoCanEnroll"
-                            data-endpoint="${ section_data['get_students_who_may_enroll_url'] }" data-csv="true">Learner
+                            data-endpoint="${ section_data['get_students_who_may_enroll_url'] }" data-csv="true">
+                        Learner
                         who can enroll
+                    </option>
+                     <option value="listEnrolledPeople"
+                            data-endpoint="${ section_data['get_students_features_url'] }">
+                        list enrolled people
                     </option>
                     <option value="proctoredExamResults"
                             data-endpoint="${ section_data['list_proctored_results_url'] }">Proctored exam results
                     </option>
-                    <option value="surveyResultReport" data-endpoint="${ section_data['course_survey_results_url'] }">
+                    <option value="surveyResultReport"
+                            data-endpoint="${ section_data['course_survey_results_url'] }">
                         Survey Result report
                     </option>
-                </optgroup>
-                <optgroup label="Problem">
-                    <option value="problemResponses" data-endpoint="${ section_data['get_problem_responses_url'] }"
-                            data-csv="true" data-problemrelated="true">Problem responses
-                    </option>
-                </optgroup>
-                <optgroup label="certificates">
-                    <option value="viewCertificates" data-csv="false"
-                            data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
-                    </option>
-                    <option value="download_certificates" data-csv="true"
-                            data-endpoint="${ section_data['get_issued_certificates_url'] }">Download csv of
-                        certificates
-                    </option>
-                    <option value="listEnrolledPeople" data-endpoint="${ section_data['get_students_features_url'] }">
-                        list enrolled people
-                    </option>
-                </optgroup>
-                <optgroup label="Grading">
-                    <option data-graderelated="true" value="gradeReport"
-                            data-endpoint="${ section_data['calculate_grades_csv_url'] }">
-                        Grade report
-                    </option>
-                    <option data-graderelated="true" value="problemGradeReport"
-                            data-endpoint="${ section_data['problem_grade_report_url'] }">
-                        Problem Grade report
-                    </option>
-                    <option value="ORADataReport" data-graderelated="true"
-                            data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
-                        report
-                    </option>
-                </optgroup>
+                </select>
+                <button class="btn-brand download-report"  type="button" value="download report">Download
+                    report
+                </button>
+            </div>
+
+
+            <!--        <input  id="download-report" type="button" value="download report">-->
+        </div>
+
+        <div style="margin-top: 20px">
+            <p class="selectionInfo gradingConfiguration">${_("Click to display the grading configuration for the course.\
+                The grading configuration is the breakdown of graded subsections of the course \
+                (such as exams and problem sets), and can be changed on the 'Grading' \
+                page (under 'Settings') in Studio.")}</p>
+            <p hidden="hidden" class="selectionInfo listAnonymizeStudentIDs">${_("Click to download a CSV of \
+                anonymized student IDs:")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports"> ${_("For large courses, generating some reports can take \
+                several hours. When report generation is complete, a \
+                link that includes the date and time of generation appears in the table below. These reports are \
+                generated in the background, meaning it is OK to navigate away from this page while your report is \
+                generating.")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports">${_("Please be patient and do not click these buttons \
+                multiple times. Clicking these buttons multiple times will significantly slow the generation \
+                process.")}
+            </p>
+            <p hidden="hidden" class="selectionInfo listEnrolledPeople">${_("For smaller courses, click to list \
+                profile information for enrolled students directly on this page:")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports profileInformation">${_("Click to generate a CSV file of \
+                all students enrolled in this course, along with profile information such as email address and \
+                username:")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports learnerWhoCanEnroll">${_("Click to generate a CSV file \
+                that lists learners who can enroll in the course but have not yet done so.")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports proctoredExamResults">${_("Click to generate a CSV file \
+                of all proctored exam results in this course.")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports surveyResultReport">${_("Click to generate a CSV file of \
+                survey results for this course.")}</p>
+
+<!--                here was problem report data-->
+        </div>
+
+    </section>
+    <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
+            <p style="margin-bottom: 15px">
+                    <strong>${_("NOTE")}: </strong>
+                    Please select the report type and then click Download Report button
+            </p>
+            <select class="" id="report-type" style="width:315px;height: 44px">
+                        <option data-graderelated="true" value="gradeReport"
+                                data-endpoint="${ section_data['calculate_grades_csv_url'] }">
+                            Grade report
+                        </option>
+                        <option data-graderelated="true" value="problemGradeReport"
+                                data-endpoint="${ section_data['problem_grade_report_url'] }">
+                            Problem Grade report
+                        </option>
+                        <option value="ORADataReport" data-graderelated="true"
+                                data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
+                            report
+                        </option>
             </select>
-        </div>
-
-        <div hidden='hidden' class="grade-related" style="height: 34px; margin-bottom: 10px">
-             <label for="report-type">Learner status</label><br>
-            <select style="width:inherit;height: 34px" >
-                <option>Course Report: Verified Learners Only</option>
-                <option>Course Report: All Learners</option>
-                <option>Problem Report: Verified Learners Only</option>
-                <option>Problem Report: All Learners</option>
-            </select>
-        </div>
         <br>
-        <br>
-        <div hidden='hidden' style="margin-bottom: 5px" class="problems problem-related">
-            ${static.renderReact(
-            component="ProblemBrowser",
-            id="react-block-listing",
-            props={
-            "courseId": course.id,
-            "excludeBlockTypes": ['html', 'video', 'discussion']
-            }
-            )}
+
+                <p style="margin-top: 15px">Learner status</p>
+                <select style="width:inherit;height: 44px">
+                    <option>Course Report: Verified Learners Only</option>
+                    <option>Course Report: All Learners</option>
+                    <option>Problem Report: Verified Learners Only</option>
+                    <option>Problem Report: All Learners</option>
+                </select>
+
+        <button style="" class="btn-brand download-report" type="button" value="download report">Download
+                    report
+        </button>
+        <div style="margin-top: 20px">
+            <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
         </div>
+    </section>
+    <section id="certificates" class="idash-section tab-data" aria-labelledby="header-certificates">
+            <p style="margin-bottom: 15px">
+                    <strong>${_("NOTE")}: </strong>
+                    Please select the report type and then click Download Report button
+            </p>
 
-        <input  id="download-report" type="button" value="download report">
+        <select class="" id="report-type" style="width:315px;height: 44px">
+                        <option value="viewCertificates" data-csv="false"
+                                data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
+                        </option>
+                        <option value="downloadCertificates" data-csv="true"
+                                data-endpoint="${ section_data['get_issued_certificates_url'] }">Download csv of
+                            certificates
+                        </option>
+                </select>
+        <button style="" class="btn-brand download-report"  type="button" value="download report">Download
+                    report
+        </button>
+        <div style="margin-top: 20px">
+            <p >${_("Click to list certificates that are issued for this course:")}</p>
+        </div>
+    </section>
+    <section id="problem" class="idash-section tab-data" aria-labelledby="header-problem">
+        <p style="margin-bottom: 15px" class="problemResponses">${_("Select a problem to generate a CSV \
+        file that lists all student answers to the problem. You also select a section or chapter to include \
+        results of all problems in that section or chapter.")}</p>
 
-
-
-    </div>
-    <div>
-        <p class="selectionInfo gradingConfiguration">${_("Click to display the grading configuration for the course.\
-            The grading configuration is the breakdown of graded subsections of the course \
-            (such as exams and problem sets), and can be changed on the 'Grading' \
-            page (under 'Settings') in Studio.")}</p>
-        <p hidden="hidden" class="selectionInfo listAnonymizeStudentIDs">${_("Click to download a CSV of anonymized \
-            student IDs:")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports"> ${_("For large courses, generating some reports can take \
-            several hours. When report generation is complete, a \
-            link that includes the date and time of generation appears in the table below. These reports are generated \
-            in the background, meaning it is OK to navigate away from this page while your report is generating.")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports">${_("Please be patient and do not click these buttons \
-            multiple times. Clicking these buttons multiple times will significantly slow the generation \
-            process.")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports profileInformation">${_("Click to generate a CSV file of all \
-            students enrolled in this course, along with profile information such as email address and username:")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports learnerWhoCanEnroll">${_("Click to generate a CSV file that \
-            lists learners who can enroll in the course but have not yet done so.")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports proctoredExamResults">${_("Click to generate a CSV file of all \
-            proctored exam results in this course.")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports surveyResultReport">${_("Click to generate a CSV file of \
-            survey results for this course.")}</p>
-
-        <p hidden="hidden" class="selectionInfo reports problemResponses">${_("Select a problem to generate a CSV file \
-            that lists all student answers to the problem. You also select a section or chapter to include results \
-            of all problems in that section or chapter.")}</p>
+        <div  style="margin-bottom: 15px" class="problems">
+                ${static.renderReact(
+                component="ProblemBrowser",
+                id="react-block-listing",
+                props={
+                "courseId": course.id,
+                "excludeBlockTypes": ['html', 'video', 'discussion']
+                }
+                )}
+            </div>
+        <button data-endpoint="${ section_data['get_problem_responses_url'] }"  id="download-problem-report" class="btn-brand" type="button" value="download report">Download
+                    report
+        </button>
         <% max_entries = settings.FEATURES.get('MAX_PROBLEM_RESPONSES_COUNT') %>
         %if max_entries is not None:
-        <p hidden="hidden" class="selectionInfo reports problemResponses">
+        <p style="margin-bottom: 15px ; margin-top: 15px"  class="">
             <strong>${_("NOTE")}: </strong>
-            ${_("The generated report is limited to {max_entries} responses. If you expect more than {max_entries} " \
-            "responses, try generating the report on a chapter-by-chapter, or problem-by-problem basis, or contact " \
+            ${_("The generated report is limited to {max_entries} responses. If you expect more than {max_entries} "
+            "responses, try generating the report on a chapter-by-chapter, or problem-by-problem basis, or contact "
             "your site administrator to increase the limit.").format(max_entries=max_entries)}
         </p>
         %endif
-
-        <p hidden="hidden" class="selectionInfo viewCertificates">${_("Click to list certificates that are issued for \
-            this course:")}</p>
-        <p hidden="hidden" class="selectionInfo gradeReport">${_("For smaller courses, click to list profile \
-            information for enrolled students directly on this page:")}</p>
-
-        <p hidden="hidden" class="selectionInfo ORADataReport">${_("Click to generate a CSV grade report for all \
-            currently enrolled students.")}</p>
-    </div>
+    </section>
+    <div style="max-width: 500px" class="request-response msg msg-confirm copy" id="report-request-response"></div>
 </div>
 
 <div class="reports-download-container action-type-container">
-    <div class="data-display-table profile-data-display-table" id="data-student-profiles-table"></div>
-    <div class="request-response msg msg-confirm copy" id="report-request-response"></div>
     <div class="data-display-text" id="data-grade-config-text"></div>
     <div class="request-response-error msg msg-error copy" id="report-request-response-error"></div>
+    <div class="data-display-table profile-data-display-table" id="data-student-profiles-table"></div>
+    <div class="data-display-table certificate-data-display-table" id="data-issued-certificates-table"></div>
+
+    <h3 class="hd hd-3">${_("Reports Available for Download")}</h3>
+    <p>
+      ${_("The reports listed below are available for download, identified by UTC date and time of generation.")}
+    </p>
+
+  %if settings.FEATURES.get('ENABLE_ASYNC_ANSWER_DISTRIBUTION'):
+    <p>
+      ${_("The answer distribution report listed below is generated periodically by an automated background process. \
+        The report is cumulative, so answers submitted after the process starts are included in a subsequent report. \
+        The report is generated several times per day.")}
+    </p>
+  %endif
+
+    ## Translators: a table of URL links to report files appears after this sentence.
+    <p>
+        ${Text(_("{strong_start}Note{strong_end}: {ul_start}{li_start}To keep student data secure, you cannot save or email these links for direct access. Copies of links expire within 5 minutes.{li_end}{li_start}Report files are deleted 90 days after generation. If you will need access to old reports, download and store the files, in accordance with your institution's data security policies.{li_end}{ul_end}")).format(
+            strong_start=HTML("<strong>"),
+            strong_end=HTML("</strong>"),
+            ul_start=HTML("<ul>"),
+            ul_end=HTML("</ul>"),
+            li_start=HTML("<li>"),
+            li_end=HTML("</li>"),
+        )}
+    </p><br>
+
+    <div class="report-downloads-table" id="report-downloads-table"
+         data-endpoint="${ section_data['list_report_downloads_url'] }"></div>
+
 </div>
 
 %if settings.FEATURES.get('ENABLE_INSTRUCTOR_BACKGROUND_TASKS'):
@@ -181,4 +275,3 @@ from openedx.core.djangolib.markup import HTML, Text
 </div>
 %endif
 
-<div class="report-downloads-table" id="report-downloads-table" data-endpoint="${ section_data['list_report_downloads_url'] }" ></div>
