@@ -548,7 +548,7 @@ class TestInstructorEnrollmentStudentModule(SharedModuleStoreTestCase):
         self.setup_team()
         team_ora_location = self.team_enabled_ora.location
 
-        # Remove self.user from the team 
+        # Remove self.user from the team
         CourseTeamMembership.objects.get(user=self.user, team=self.team).delete()
 
         # All teammates should have a student module (except lazy_teammate)
@@ -559,7 +559,7 @@ class TestInstructorEnrollmentStudentModule(SharedModuleStoreTestCase):
 
         reset_student_attempts(self.course_key, self.user, team_ora_location, requesting_user=self.user, delete_module=True)
 
-        # self.user should be deleted, but no other teammates should be affected. 
+        # self.user should be deleted, but no other teammates should be affected.
         self.assert_no_student_module(self.user, team_ora_location)
         self.assertIsNotNone(self.get_student_module(self.teammate_a, team_ora_location))
         self.assertIsNotNone(self.get_student_module(self.teammate_b, team_ora_location))
