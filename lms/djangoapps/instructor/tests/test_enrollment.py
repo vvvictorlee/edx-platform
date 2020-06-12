@@ -443,7 +443,8 @@ class TestInstructorEnrollmentStudentModule(SharedModuleStoreTestCase):
         score = sub_api.get_score(student_item)
         self.assertIs(score, None)
 
-    def setup_team(self):  # pylint: disable=attribute-defined-outside-init
+    # pylint: disable=attribute-defined-outside-init
+    def setup_team(self):
         """ Set up a team with teammates and StudentModules """
         # Make users
         self.teammate_a = UserFactory()
@@ -557,7 +558,9 @@ class TestInstructorEnrollmentStudentModule(SharedModuleStoreTestCase):
         self.assertIsNotNone(self.get_student_module(self.teammate_b, team_ora_location))
         self.assert_no_student_module(self.lazy_teammate, team_ora_location)
 
-        reset_student_attempts(self.course_key, self.user, team_ora_location, requesting_user=self.user, delete_module=True)
+        reset_student_attempts(
+            self.course_key, self.user, team_ora_location, requesting_user=self.user, delete_module=True
+        )
 
         # self.user should be deleted, but no other teammates should be affected.
         self.assert_no_student_module(self.user, team_ora_location)
