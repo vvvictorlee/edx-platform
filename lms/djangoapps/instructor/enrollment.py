@@ -244,7 +244,6 @@ def reset_student_attempts(course_id, student, module_state_key, requesting_user
         submissions.SubmissionError: unexpected error occurred while resetting the score in the submissions API.
 
     """
-    import pdb; pdb.set_trace()
     user_id = anonymous_id_for_user(student, course_id)
     requesting_user_id = anonymous_id_for_user(requesting_user, course_id)
     submission_cleared = False
