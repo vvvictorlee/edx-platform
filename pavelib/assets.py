@@ -648,9 +648,9 @@ def process_npm_assets():
 
 
 @task
-# @needs(
-#     'pavelib.prereqs.install_python_prereqs',
-# )
+@needs(
+    'pavelib.prereqs.install_python_prereqs',
+)
 @no_help
 def process_xmodule_assets():
     """
@@ -887,9 +887,9 @@ def watch_assets(options):
 
 
 @task
-# @needs(
-#     'pavelib.prereqs.install_node_prereqs',
-# )
+@needs(
+    'pavelib.prereqs.install_node_prereqs',
+)
 @consume_args
 @timed
 def update_assets(args):
@@ -949,14 +949,14 @@ def update_assets(args):
     # Compile sass for themes and system
     execute_compile_sass(args)
 
-    # if args.collect:
-    #     if args.debug or args.debug_collect:
-    #         collect_log_args.update({COLLECTSTATIC_LOG_DIR_ARG: None})
-    #
-    #     if args.collect_log_dir:
-    #         collect_log_args.update({COLLECTSTATIC_LOG_DIR_ARG: args.collect_log_dir})
-    #
-    #     collect_assets(args.system, args.settings, **collect_log_args)
+    if args.collect:
+        if args.debug or args.debug_collect:
+            collect_log_args.update({COLLECTSTATIC_LOG_DIR_ARG: None})
+
+        if args.collect_log_dir:
+            collect_log_args.update({COLLECTSTATIC_LOG_DIR_ARG: args.collect_log_dir})
+
+        collect_assets(args.system, args.settings, **collect_log_args)
 
     if args.watch:
         call_task(
