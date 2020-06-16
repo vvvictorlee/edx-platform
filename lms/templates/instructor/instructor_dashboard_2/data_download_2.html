@@ -14,18 +14,18 @@ from openedx.core.djangolib.markup import HTML, Text
         line-height: 2;
     }
 
-    .override {
-        width: 335px;
-    }
+    /*.override {*/
+    /*    width: 335px;*/
+    /*}*/
     .download-report {
         margin-left: 10px;
     }
 
-    .data-download-container {
-        padding:15px;
-        width:50%;
-        border: grey 1px solid
-    }
+    /*.data-download-container {*/
+    /*    padding:15px;*/
+    /*    width:50%;*/
+    /*    border: grey 1px solid*/
+    /*}*/
 
 </style>
 
@@ -41,15 +41,19 @@ from openedx.core.djangolib.markup import HTML, Text
         <li class="nav-item ">
             <button type="button" class="btn-link reports  active-section" data-section="reports">Reports</button>
         </li>
+%if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
         <li class="nav-item">
             <button type="button" class="btn-link problem-report" data-section="problem">Problem Report</button>
         </li>
         <li class="nav-item">
             <button type="button" class="btn-link certificates" data-section="certificates">Certificates</button>
         </li>
+        %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
         <li class="nav-item">
             <button type="button" class="btn-link grading" data-section="grading">Grading</button>
         </li>
+        %endif
+%endif
 
     </ul>
     <section id="reports" class="idash-section tab-data" aria-labelledby="header-reports">
@@ -60,7 +64,7 @@ from openedx.core.djangolib.markup import HTML, Text
                     <strong>${_("NOTE")}: </strong>
                     Please select the report type and then click Download Report button
                 </p>
-                <select id="report-type" style="width:315px;height: 44px">
+                <select class="report-type" style="width:315px;height: 44px">
                     <option value="gradingConfiguration"
                             data-endpoint="${ section_data['get_grading_config_url'] }">
                         Grading Configuration
@@ -69,6 +73,7 @@ from openedx.core.djangolib.markup import HTML, Text
                             class="${'is-disabled' if disable_buttons else ''}"
                             aria-disabled="${'true' if disable_buttons else 'false'}">Anonymized Student IDs
                     </option>
+   %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
                     <option value="profileInformation"
                             data-endpoint="${ section_data['get_students_features_url'] }"
                             data-csv="true">Profile Information
@@ -80,15 +85,26 @@ from openedx.core.djangolib.markup import HTML, Text
                     </option>
                      <option value="listEnrolledPeople"
                             data-endpoint="${ section_data['get_students_features_url'] }">
-                        list enrolled people
+                        List enrolled students profile information
                     </option>
+                    %if section_data['show_generate_proctored_exam_report_button']:
                     <option value="proctoredExamResults"
                             data-endpoint="${ section_data['list_proctored_results_url'] }">Proctored exam results
                     </option>
+                    %endif
+                    %if section_data['course_has_survey']:
                     <option value="surveyResultReport"
                             data-endpoint="${ section_data['course_survey_results_url'] }">
                         Survey Result report
                     </option>
+                    %endif
+                    %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
+                    <option value="ORADataReport" data-graderelated="true"
+                                data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
+                            report
+                    </option>
+                    %endif
+%endif
                 </select>
                 <button class="btn-brand download-report"  type="button" value="download report">Download
                     report
@@ -117,9 +133,10 @@ from openedx.core.djangolib.markup import HTML, Text
                 multiple times. Clicking these buttons multiple times will significantly slow the generation \
                 process.")}
             </p>
+            % if not disable_buttons:
             <p hidden="hidden" class="selectionInfo listEnrolledPeople">${_("For smaller courses, click to list \
                 profile information for enrolled students directly on this page:")}</p>
-
+            %endif
             <p hidden="hidden" class="selectionInfo reports profileInformation">${_("Click to generate a CSV file of \
                 all students enrolled in this course, along with profile information such as email address and \
                 username:")}</p>
@@ -137,12 +154,14 @@ from openedx.core.djangolib.markup import HTML, Text
         </div>
 
     </section>
+ %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
+    %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
     <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
             <p style="margin-bottom: 15px">
                     <strong>${_("NOTE")}: </strong>
                     Please select the report type and then click Download Report button
             </p>
-            <select class="" id="report-type" style="width:315px;height: 44px">
+            <select class="report-type"  style="width:315px;height: 44px">
                         <option data-graderelated="true" value="gradeReport"
                                 data-endpoint="${ section_data['calculate_grades_csv_url'] }">
                             Grade report
@@ -151,19 +170,14 @@ from openedx.core.djangolib.markup import HTML, Text
                                 data-endpoint="${ section_data['problem_grade_report_url'] }">
                             Problem Grade report
                         </option>
-                        <option value="ORADataReport" data-graderelated="true"
-                                data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
-                            report
-                        </option>
+
             </select>
         <br>
 
                 <p style="margin-top: 15px">Learner status</p>
-                <select style="width:inherit;height: 44px">
-                    <option>Course Report: Verified Learners Only</option>
-                    <option>Course Report: All Learners</option>
-                    <option>Problem Report: Verified Learners Only</option>
-                    <option>Problem Report: All Learners</option>
+                <select class="learner-status" style="width:inherit;height: 44px">
+                    <option value="true">Verified Learners Only</option>
+                    <option value="false">All Learners</option>
                 </select>
 
         <button style="" class="btn-brand download-report" type="button" value="download report">Download
@@ -173,13 +187,14 @@ from openedx.core.djangolib.markup import HTML, Text
             <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
         </div>
     </section>
+    %endif
     <section id="certificates" class="idash-section tab-data" aria-labelledby="header-certificates">
             <p style="margin-bottom: 15px">
                     <strong>${_("NOTE")}: </strong>
                     Please select the report type and then click Download Report button
             </p>
 
-        <select class="" id="report-type" style="width:315px;height: 44px">
+        <select class="report-type"  style="width:315px;height: 44px">
                         <option value="viewCertificates" data-csv="false"
                                 data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
                         </option>
@@ -223,14 +238,17 @@ from openedx.core.djangolib.markup import HTML, Text
         </p>
         %endif
     </section>
-    <div style="max-width: 500px" class="request-response msg msg-confirm copy" id="report-request-response"></div>
+%endif
+    <div class="request-response msg msg-confirm copy" id="report-request-response"></div>
+    <div class="request-response-error msg msg-error copy" id="report-request-response-error"></div>
+
 </div>
 
 <div class="reports-download-container action-type-container">
     <div class="data-display-text" id="data-grade-config-text"></div>
-    <div class="request-response-error msg msg-error copy" id="report-request-response-error"></div>
     <div class="data-display-table profile-data-display-table" id="data-student-profiles-table"></div>
     <div class="data-display-table certificate-data-display-table" id="data-issued-certificates-table"></div>
+    <hr>
 
     <h3 class="hd hd-3">${_("Reports Available for Download")}</h3>
     <p>

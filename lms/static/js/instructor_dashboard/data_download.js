@@ -50,9 +50,8 @@
             this.$reports_request_response_error = $('.request-response-error');
             this.report_downloads = new (ReportDownloads())(this.$section);
             this.instructor_tasks = new (PendingInstructorTasks())(this.$section);
-            this.clear_display();
             this.$download_report = $('.download-report');
-            this.$report_type_selector = $('#report-type');
+            this.$report_type_selector = $('.report-type');
             this.$selection_informations = $('.selectionInfo');
             this.$certificate_display_table = $('.certificate-data-display-table');
             // this.$certificates_request_err = $('.issued-certificates-error.request-response-error');
@@ -62,7 +61,8 @@
             // this.$reportSection = $('section #reports');
             this.$navButton = $('.data-download-nav .btn-link');
             this.$selectedSection = $('#' + this.$navButton.first().attr('data-section'));
-
+            this.$learnerStatus = $('.learner-status');
+            this.clear_display();
             this.$navButton.click(function(event) {
                 event.preventDefault();
                 var selectedSection = '#' + $(this).attr('data-section');
@@ -99,6 +99,7 @@
                         $(ele).hide();
                     }
                 });
+                dataDownloadObj.clear_display();
             });
             this.$download_report.click(function() {
                 // var selectedOption = dataDownloadObj.$report_type_selector.find('option:selected');
@@ -116,7 +117,7 @@
                     type: 'POST',
                     url: url,
                     error: function() {
-                        // dataDownloadObj.clear_ui();
+                        dataDownloadObj.clear_display();
                         dataDownloadObj.$download_request_response_error.text(
                             gettext('Error getting issued certificates list.')
                         );
@@ -125,34 +126,7 @@
                         });
                     },
                     success: function(data) {
-                        var $tablePlaceholder, columns, feature, gridData, options;
-                        // dataDownloadObj.clear_ui();
-                        options = {
-                            enableCellNavigation: true,
-                            enableColumnReorder: false,
-                            forceFitColumns: true,
-                            rowHeight: 35
-                        };
-                        columns = (function() {
-                            var i, len, ref, results;
-                            ref = data.queried_features;
-                            results = [];
-                            for (i = 0, len = ref.length; i < len; i++) {
-                                feature = ref[i];
-                                results.push({
-                                    id: feature,
-                                    field: feature,
-                                    name: data.feature_names[feature]
-                                });
-                            }
-                            return results;
-                        }());
-                        gridData = data.certificates;
-                        $tablePlaceholder = $('<div/>', {
-                            class: 'slickgrid'
-                        });
-                        dataDownloadObj.$certificate_display_table.append($tablePlaceholder);
-                        return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
+                        dataDownloadObj.buildDataTable(data);
                     }
                 });
             };
@@ -263,34 +237,7 @@
                         });
                     },
                     success: function(data) {
-                        var $tablePlaceholder, columns, feature, gridData, options;
-                        dataDownloadObj.clear_display();
-                        options = {
-                            enableCellNavigation: true,
-                            enableColumnReorder: false,
-                            forceFitColumns: true,
-                            rowHeight: 35
-                        };
-                        columns = (function() {
-                            var i, len, ref, results;
-                            ref = data.queried_features;
-                            results = [];
-                            for (i = 0, len = ref.length; i < len; i++) {
-                                feature = ref[i];
-                                results.push({
-                                    id: feature,
-                                    field: feature,
-                                    name: data.feature_names[feature]
-                                });
-                            }
-                            return results;
-                        }());
-                        gridData = data.students;
-                        $tablePlaceholder = $('<div/>', {
-                            class: 'slickgrid'
-                        });
-                        dataDownloadObj.$download_display_table.append($tablePlaceholder);
-                        return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
+                        dataDownloadObj.buildDataTable(data);
                     }
                 });
             };
@@ -369,17 +316,19 @@
             };
             this.gradeReport = function(selected) {
                 var errorMessage = gettext('Error generating grades. Please try again.');
-                dataDownloadObj.downloadCSV(selected, errorMessage);
+                var learnerStatus = dataDownloadObj.$learnerStatus.val();
+                dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
             };
             this.problemGradeReport = function(selected) {
                 var errorMessage = gettext('Error generating problem grade report. Please try again.');
-                dataDownloadObj.downloadCSV(selected, errorMessage);
+                var learnerStatus = dataDownloadObj.$learnerStatus.val();
+                dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
             };
             this.ORADataReport = function(selected) {
                 var errorMessage = gettext('Error generating ORA data report. Please try again.');
-                dataDownloadObj.downloadCSV(selected, errorMessage);
+                dataDownloadObj.downloadCSV(selected, errorMessage, false);
             };
-            this.downloadCSV = function(selected, errorMessage) {
+            this.downloadCSV = function(selected, errorMessage, learnerStatus) {
                 var url = selected.data('endpoint');
                 // var errorMessage = '';
                 dataDownloadObj.clear_display();
@@ -387,6 +336,7 @@
                     type: 'POST',
                     dataType: 'json',
                     url: url,
+                    data: {verified_learners_only: learnerStatus},
                     error: function(error) {
                         if (error.responseText) {
                           // eslint-disable-next-line no-param-reassign
@@ -404,6 +354,36 @@
                         });
                     }
                 });
+            };
+            this.buildDataTable = function(data) {
+                var $tablePlaceholder, columns, feature, gridData, options;
+                dataDownloadObj.clear_display();
+                options = {
+                    enableCellNavigation: true,
+                    enableColumnReorder: false,
+                    forceFitColumns: true,
+                    rowHeight: 35
+                };
+                columns = (function() {
+                    var i, len, ref, results;
+                    ref = data.queried_features;
+                    results = [];
+                    for (i = 0, len = ref.length; i < len; i++) {
+                        feature = ref[i];
+                        results.push({
+                            id: feature,
+                            field: feature,
+                            name: data.feature_names[feature]
+                        });
+                    }
+                    return results;
+                }());
+                gridData = data.students;
+                $tablePlaceholder = $('<div/>', {
+                    class: 'slickgrid'
+                });
+                dataDownloadObj.$download_display_table.append($tablePlaceholder);
+                return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
             };
         }
 
@@ -424,6 +404,7 @@
             this.$download_request_response_error.empty();
             this.$reports_request_response.empty();
             this.$reports_request_response_error.empty();
+            this.$certificate_display_table.empty();
             $('.msg-confirm').css({
                 display: 'none'
             });
