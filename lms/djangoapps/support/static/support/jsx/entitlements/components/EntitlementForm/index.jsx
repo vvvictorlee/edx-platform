@@ -4,14 +4,6 @@ import PropTypes from 'prop-types';
 import { Button, InputSelect, InputText, TextArea } from '@edx/paragon';
 import { formTypes } from '../../data/constants/formTypes';
 
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-
-const element = <Welcome name="Sara" />;
-ReactDOM.render(element, document.getElementById('root'));
-
-
 
 class EntitlementForm extends React.Component {
   constructor(props) {
