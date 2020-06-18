@@ -60,6 +60,7 @@
             'youtube': '//www.youtube.com/player_api?noext',
             'js/src/ajax_prefix': 'xmodule_js/common_static/js/src/ajax_prefix',
             'js/instructor_dashboard/student_admin': 'js/instructor_dashboard/student_admin',
+            // 'js/instructor_dashboard/data_download': 'js/instructor_dashboard/data_download',
             'xmodule_js/common_static/js/test/add_ajax_prefix': 'xmodule_js/common_static/js/test/add_ajax_prefix',
             'xblock/lms.runtime.v1': 'lms/js/xblock/lms.runtime.v1',
             'xblock': 'common/js/xblock',
@@ -301,6 +302,10 @@
             'js/instructor_dashboard/student_admin': {
                 exports: 'js/instructor_dashboard/student_admin',
                 deps: ['jquery', 'underscore', 'js/instructor_dashboard/util', 'string_utils']
+            },
+            'js/instructor_dashboard/data_download': {
+                exports: 'js/instructor_dashboard/data_download',
+                deps: ['jquery', 'js/instructor_dashboard/util', 'string_utils', 'js/instructor_dashboard/instructor_dashboard']
             },
             'js/instructor_dashboard/certificates': {
                 exports: 'js/instructor_dashboard/certificates',
@@ -764,6 +769,7 @@
         'js/spec/instructor_dashboard/ecommerce_spec.js',
         'js/spec/instructor_dashboard/membership_auth_spec.js',
         'js/spec/instructor_dashboard/student_admin_spec.js',
+        'js/spec/instructor_dashboard/data_downloadd_spec.js',
         'js/spec/markdown_editor_spec.js',
         'js/spec/dateutil_factory_spec.js',
         'js/spec/navigation_spec.js',

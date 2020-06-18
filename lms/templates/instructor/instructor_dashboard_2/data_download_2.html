@@ -14,34 +14,38 @@ from openedx.core.djangolib.markup import HTML, Text
         line-height: 2;
     }
 
-    /*.override {*/
-    /*    width: 335px;*/
-    /*}*/
+    .mb-15 {
+        margin-bottom: 20px;
+    }
+    .mb-20 {
+        margin-bottom: 20px;
+    }
+
     .download-report {
         margin-left: 10px;
     }
 
-    /*.data-download-container {*/
-    /*    padding:15px;*/
-    /*    width:50%;*/
-    /*    border: grey 1px solid*/
-    /*}*/
+    .selector {
+        width: 315px;
+        height: 44px
+    }
+
 
 </style>
 
 
-<main id="main" aria-label="Content" tabindex="-1">
+<!--<main id="main" aria-label="Content" tabindex="-1">-->
 
 
-</main>
-<div  class="data-download-container action-type-container">
+<!--</main>-->
+<div class="data-download-container  action-type-container">
     <!--    <div class="request-response-error msg msg-error copy" id="data-request-response-error"></div>-->
     <ul class="data-download-nav">
 
         <li class="nav-item ">
             <button type="button" class="btn-link reports  active-section" data-section="reports">Reports</button>
         </li>
-%if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
+        %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
         <li class="nav-item">
             <button type="button" class="btn-link problem-report" data-section="problem">Problem Report</button>
         </li>
@@ -53,18 +57,18 @@ from openedx.core.djangolib.markup import HTML, Text
             <button type="button" class="btn-link grading" data-section="grading">Grading</button>
         </li>
         %endif
-%endif
+        %endif
 
     </ul>
     <section id="reports" class="idash-section tab-data" aria-labelledby="header-reports">
-        <div>
+        <div class="mb-15">
 
             <div class="mb-5">
-                <p style="margin-bottom: 15px">
+                <p class="mb-15">
                     <strong>${_("NOTE")}: </strong>
                     Please select the report type and then click Download Report button
                 </p>
-                <select class="report-type" style="width:315px;height: 44px">
+                <select class="report-type selector">
                     <option value="gradingConfiguration"
                             data-endpoint="${ section_data['get_grading_config_url'] }">
                         Grading Configuration
@@ -73,7 +77,7 @@ from openedx.core.djangolib.markup import HTML, Text
                             class="${'is-disabled' if disable_buttons else ''}"
                             aria-disabled="${'true' if disable_buttons else 'false'}">Anonymized Student IDs
                     </option>
-   %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
+                    %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
                     <option value="profileInformation"
                             data-endpoint="${ section_data['get_students_features_url'] }"
                             data-csv="true">Profile Information
@@ -83,7 +87,7 @@ from openedx.core.djangolib.markup import HTML, Text
                         Learner
                         who can enroll
                     </option>
-                     <option value="listEnrolledPeople"
+                    <option value="listEnrolledPeople"
                             data-endpoint="${ section_data['get_students_features_url'] }">
                         List enrolled students profile information
                     </option>
@@ -100,13 +104,13 @@ from openedx.core.djangolib.markup import HTML, Text
                     %endif
                     %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
                     <option value="ORADataReport" data-graderelated="true"
-                                data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
-                            report
+                            data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
+                        report
                     </option>
                     %endif
-%endif
+                    %endif
                 </select>
-                <button class="btn-brand download-report"  type="button" value="download report">Download
+                <button class="btn-brand download-report" type="button" value="download report">Download
                     report
                 </button>
             </div>
@@ -115,9 +119,9 @@ from openedx.core.djangolib.markup import HTML, Text
             <!--        <input  id="download-report" type="button" value="download report">-->
         </div>
 
-        <div style="margin-top: 20px">
-            <p class="selectionInfo gradingConfiguration">${_("Click to display the grading configuration for the course.\
-                The grading configuration is the breakdown of graded subsections of the course \
+        <div>
+            <p class="selectionInfo gradingConfiguration">${_("Click to display the grading configuration for the \
+                course. The grading configuration is the breakdown of graded subsections of the course \
                 (such as exams and problem sets), and can be changed on the 'Grading' \
                 page (under 'Settings') in Studio.")}</p>
             <p hidden="hidden" class="selectionInfo listAnonymizeStudentIDs">${_("Click to download a CSV of \
@@ -149,88 +153,87 @@ from openedx.core.djangolib.markup import HTML, Text
 
             <p hidden="hidden" class="selectionInfo reports surveyResultReport">${_("Click to generate a CSV file of \
                 survey results for this course.")}</p>
-
-<!--                here was problem report data-->
         </div>
 
     </section>
- %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
+    %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
     %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
     <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
-            <p style="margin-bottom: 15px">
-                    <strong>${_("NOTE")}: </strong>
-                    Please select the report type and then click Download Report button
-            </p>
-            <select class="report-type"  style="width:315px;height: 44px">
-                        <option data-graderelated="true" value="gradeReport"
-                                data-endpoint="${ section_data['calculate_grades_csv_url'] }">
-                            Grade report
-                        </option>
-                        <option data-graderelated="true" value="problemGradeReport"
-                                data-endpoint="${ section_data['problem_grade_report_url'] }">
-                            Problem Grade report
-                        </option>
+        <p class="mb-15">
+            <strong>${_("NOTE")}: </strong>
+            Please select the report type and then click Download Report button
+        </p>
+        <select class="report-type selector mb-15">
+            <option data-graderelated="true" value="gradeReport"
+                    data-endpoint="${ section_data['calculate_grades_csv_url'] }">
+                Grade report
+            </option>
+            <option data-graderelated="true" value="problemGradeReport"
+                    data-endpoint="${ section_data['problem_grade_report_url'] }">
+                Problem Grade report
+            </option>
 
-            </select>
+        </select>
         <br>
 
-                <p style="margin-top: 15px">Learner status</p>
-                <select class="learner-status" style="width:inherit;height: 44px">
-                    <option value="true">Verified Learners Only</option>
-                    <option value="false">All Learners</option>
-                </select>
+        <p>Learner status</p>
+        <select class="learner-status selector">
+            <option value="true">Verified Learners Only</option>
+            <option value="false">All Learners</option>
+        </select>
 
-        <button style="" class="btn-brand download-report" type="button" value="download report">Download
-                    report
+        <button class="mb-20 btn-brand download-report" type="button" value="download report">Download
+            report
         </button>
-        <div style="margin-top: 20px">
+        <div>
             <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
         </div>
     </section>
     %endif
     <section id="certificates" class="idash-section tab-data" aria-labelledby="header-certificates">
-            <p style="margin-bottom: 15px">
-                    <strong>${_("NOTE")}: </strong>
-                    Please select the report type and then click Download Report button
-            </p>
+        <p class="mb-15">
+            <strong>${_("NOTE")}: </strong>
+            Please select the report type and then click Download Report button
+        </p>
 
-        <select class="report-type"  style="width:315px;height: 44px">
-                        <option value="viewCertificates" data-csv="false"
-                                data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
-                        </option>
-                        <option value="downloadCertificates" data-csv="true"
-                                data-endpoint="${ section_data['get_issued_certificates_url'] }">Download csv of
-                            certificates
-                        </option>
-                </select>
-        <button style="" class="btn-brand download-report"  type="button" value="download report">Download
-                    report
+        <select class="report-type selector">
+            <option value="viewCertificates" data-csv="false"
+                    data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
+            </option>
+            <option value="downloadCertificates" data-csv="true"
+                    data-endpoint="${ section_data['get_issued_certificates_url'] }">Download csv of
+                certificates
+            </option>
+        </select>
+        <button  class="mb-20 btn-brand download-report" type="button" value="download report">Download
+            report
         </button>
-        <div style="margin-top: 20px">
-            <p >${_("Click to list certificates that are issued for this course:")}</p>
+        <div>
+            <p>${_("Click to list certificates that are issued for this course:")}</p>
         </div>
     </section>
     <section id="problem" class="idash-section tab-data" aria-labelledby="header-problem">
-        <p style="margin-bottom: 15px" class="problemResponses">${_("Select a problem to generate a CSV \
-        file that lists all student answers to the problem. You also select a section or chapter to include \
-        results of all problems in that section or chapter.")}</p>
+        <p class="mb-15 problemResponses">${_("Select a problem to generate a CSV \
+            file that lists all student answers to the problem. You also select a section or chapter to include \
+            results of all problems in that section or chapter.")}</p>
 
-        <div  style="margin-bottom: 15px" class="problems">
-                ${static.renderReact(
-                component="ProblemBrowser",
-                id="react-block-listing",
-                props={
-                "courseId": course.id,
-                "excludeBlockTypes": ['html', 'video', 'discussion']
-                }
-                )}
-            </div>
-        <button data-endpoint="${ section_data['get_problem_responses_url'] }"  id="download-problem-report" class="btn-brand" type="button" value="download report">Download
-                    report
+        <div class="mb-15 problems">
+            ${static.renderReact(
+            component="ProblemBrowser",
+            id="react-block-listing",
+            props={
+            "courseId": course.id,
+            "excludeBlockTypes": ['html', 'video', 'discussion']
+            }
+            )}
+        </div>
+        <button data-endpoint="${ section_data['get_problem_responses_url'] }" id="download-problem-report"
+                class="btn-brand mb-20" type="button" value="download report">Download
+            report
         </button>
         <% max_entries = settings.FEATURES.get('MAX_PROBLEM_RESPONSES_COUNT') %>
         %if max_entries is not None:
-        <p style="margin-bottom: 15px ; margin-top: 15px"  class="">
+        <p class="mb-15">
             <strong>${_("NOTE")}: </strong>
             ${_("The generated report is limited to {max_entries} responses. If you expect more than {max_entries} "
             "responses, try generating the report on a chapter-by-chapter, or problem-by-problem basis, or contact "
@@ -238,7 +241,7 @@ from openedx.core.djangolib.markup import HTML, Text
         </p>
         %endif
     </section>
-%endif
+    %endif
     <div class="request-response msg msg-confirm copy" id="report-request-response"></div>
     <div class="request-response-error msg msg-error copy" id="report-request-response-error"></div>
 
@@ -252,20 +255,23 @@ from openedx.core.djangolib.markup import HTML, Text
 
     <h3 class="hd hd-3">${_("Reports Available for Download")}</h3>
     <p>
-      ${_("The reports listed below are available for download, identified by UTC date and time of generation.")}
+        ${_("The reports listed below are available for download, identified by UTC date and time of generation.")}
     </p>
 
-  %if settings.FEATURES.get('ENABLE_ASYNC_ANSWER_DISTRIBUTION'):
+    %if settings.FEATURES.get('ENABLE_ASYNC_ANSWER_DISTRIBUTION'):
     <p>
-      ${_("The answer distribution report listed below is generated periodically by an automated background process. \
+        ${_("The answer distribution report listed below is generated periodically by an automated background process. \
         The report is cumulative, so answers submitted after the process starts are included in a subsequent report. \
         The report is generated several times per day.")}
     </p>
-  %endif
+    %endif
 
     ## Translators: a table of URL links to report files appears after this sentence.
     <p>
-        ${Text(_("{strong_start}Note{strong_end}: {ul_start}{li_start}To keep student data secure, you cannot save or email these links for direct access. Copies of links expire within 5 minutes.{li_end}{li_start}Report files are deleted 90 days after generation. If you will need access to old reports, download and store the files, in accordance with your institution's data security policies.{li_end}{ul_end}")).format(
+        ${Text(_("{strong_start}Note{strong_end}: {ul_start}{li_start}To keep student data secure, you cannot save or \
+        email these links for direct access. Copies of links expire within 5 minutes.{li_end}{li_start}Report files \
+        are deleted 90 days after generation. If you will need access to old reports, download and store the files, \
+        in accordance with your institution's data security policies.{li_end}{ul_end}")).format(
             strong_start=HTML("<strong>"),
             strong_end=HTML("</strong>"),
             ul_start=HTML("<ul>"),
@@ -281,7 +287,7 @@ from openedx.core.djangolib.markup import HTML, Text
 </div>
 
 %if settings.FEATURES.get('ENABLE_INSTRUCTOR_BACKGROUND_TASKS'):
-<div class="running-tasks-container action-type-container">
+<div class="running-tasks-container data_download_2 action-type-container">
     <hr>
     <h3 class="hd hd-3">${_("Pending Tasks")}</h3>
     <div class="running-tasks-section">

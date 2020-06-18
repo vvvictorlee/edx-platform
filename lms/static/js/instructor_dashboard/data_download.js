@@ -1,4 +1,4 @@
-/* globals _ */
+/* globals _, DataDonwload, PendingInstructorTasks, ReportDownloads */
 
 (function() {
     'use strict';
@@ -16,33 +16,12 @@
         return window.InstructorDashboard.util.ReportDownloads;
     };
 
-    // DataDownloadCertificate = (function() {
-    //     function InstructorDashboardDataDownloadCertificate() {
-    //         var dataDownloadCert = this;
-    //         // this.$container = $container;
-    //         this.$list_issued_certificate_table_btn = this.$container.find("input[name='issued-certificates-list']");
-    //         this.$list_issued_certificate_csv_btn = this.$container.find("input[name='issued-certificates-csv']");
-    //
-    //
-    //     InstructorDashboardDataDownloadCertificate.prototype.clear_ui = function() {
-    //         this.$certificate_display_table.empty();
-    //         this.$certificates_request_err.empty();
-    //         return $('.issued-certificates-error.msg-error').css({
-    //             display: 'none'
-    //         });
-    //     };
-    //
-    //     return InstructorDashboardDataDownloadCertificate;
-    // }());
-
     DataDownload = (function() {
         function InstructorDashboardDataDownload($section) {
             var dataDownloadObj = this;
             this.$section = $section;
             this.$section.data('wrapper', this);
-            // this.ddc = new DataDownloadCertificate();
             this.$list_problem_responses_csv_input = this.$section.find("input[name='problem-location']");
-            // this.$download = this.$section.find('.data-download-container');
             this.$download_display_text = $('.data-display-text');
             this.$download_request_response_error = $('.request-response-error');
             this.$download_display_table = $('.profile-data-display-table');
@@ -54,18 +33,31 @@
             this.$report_type_selector = $('.report-type');
             this.$selection_informations = $('.selectionInfo');
             this.$certificate_display_table = $('.certificate-data-display-table');
-            // this.$certificates_request_err = $('.issued-certificates-error.request-response-error');
-            // this.$grdingSsection = $('section #grading');
             this.$downloadProblemReport = $('#download-problem-report');
-            // this.$certificateSection = $('section #certificate');
-            // this.$reportSection = $('section #reports');
             this.$navButton = $('.data-download-nav .btn-link');
             this.$selectedSection = $('#' + this.$navButton.first().attr('data-section'));
             this.$learnerStatus = $('.learner-status');
+
+            this.clear_display = function() {
+                this.$download_display_text.empty();
+                this.$download_display_table.empty();
+                this.$download_request_response_error.empty();
+                this.$reports_request_response.empty();
+                this.$reports_request_response_error.empty();
+                this.$certificate_display_table.empty();
+                $('.msg-confirm').css({
+                    display: 'none'
+                });
+                return $('.msg-error').css({
+                    display: 'none'
+                });
+            };
+
             this.clear_display();
+
             this.$navButton.click(function(event) {
-                event.preventDefault();
                 var selectedSection = '#' + $(this).attr('data-section');
+                event.preventDefault();
                 $('.data-download-nav .btn-link').removeClass('active-section');
                 $('section.tab-data').hide();
                 $(selectedSection).show();
@@ -81,17 +73,6 @@
 
             this.$report_type_selector.change(function() {
                 var selectedOption = dataDownloadObj.$report_type_selector.val();
-                // var $option = dataDownloadObj.$report_type_selector.find('option:selected');
-                // var $gradeRelated = $('.grade-related');
-                // var $problemRelated = $('.problem-related');
-                // if ($option.data('graderelated') === true) {
-                //     $gradeRelated.show();
-                // } else if ($option.data('problemrelated') === true) {
-                //     $problemRelated.show();
-                // } else {
-                //     $gradeRelated.hide();
-                //     // $problemRelated.hide();
-                // }
                 dataDownloadObj.$selection_informations.each(function(index, ele) {
                     if ($(ele).hasClass(selectedOption)) {
                         $(ele).show();
@@ -101,17 +82,16 @@
                 });
                 dataDownloadObj.clear_display();
             });
-            this.$download_report.click(function() {
-                // var selectedOption = dataDownloadObj.$report_type_selector.find('option:selected');
+
+            this.clickHandler = function() {
                 var selectedOption = dataDownloadObj.$selectedSection.find('select').find('option:selected');
                 dataDownloadObj[selectedOption.val()](selectedOption);
-            });
-
-            // ////////////////
+            };
+            this.$download_report.click(dataDownloadObj.clickHandler);
 
             this.viewCertificates = function(selected) {
                 var url = selected.data('endpoint');
-                // dataDownloadObj.clear_ui();
+                dataDownloadObj.clear_display();
                 dataDownloadObj.$certificate_display_table.text(gettext('Loading data...'));
                 return $.ajax({
                     type: 'POST',
@@ -130,17 +110,16 @@
                     }
                 });
             };
+
             this.downloadCertificates = function(selected) {
                 // dataDownloadObj.clear_ui();
                 location.href = selected.data('endpoint') + '?csv=true';
             };
 
-
-            // //////////////////
-
             this.listAnonymizeStudentIDs = function(select) {
                 location.href = select.data('endpoint');
             };
+
             this.proctoredExamResults = function(selected) {
                 var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating proctored exam results. Please try again.');
@@ -194,6 +173,7 @@
                     }
                 });
             };
+
             this.profileInformation = function(selected) {
                 var url = selected.data('endpoint') + '/csv';
                 var errorMessage = gettext('Error generating student profile information. Please try again.');
@@ -219,6 +199,7 @@
                     }
                 });
             };
+
             this.listEnrolledPeople = function(selected) {
                 var url = selected.data('endpoint');
                 dataDownloadObj.clear_display();
@@ -241,6 +222,7 @@
                     }
                 });
             };
+
             this.$downloadProblemReport.click(function(event) {
                 var url = $(event.target).data('endpoint');
                 dataDownloadObj.clear_display();
@@ -267,6 +249,7 @@
                     }
                 });
             });
+
             this.learnerWhoCanEnroll = function(selected) {
                 var url = selected.data('endpoint');
                 var errorMessage = gettext('Error generating list of students who may enroll. Please try again.');
@@ -292,6 +275,7 @@
                     }
                 });
             };
+
             this.gradingConfiguration = function(selected) {
                 var url = selected.data('endpoint');
                 return $.ajax({
@@ -314,23 +298,26 @@
                     }
                 });
             };
+
             this.gradeReport = function(selected) {
                 var errorMessage = gettext('Error generating grades. Please try again.');
                 var learnerStatus = dataDownloadObj.$learnerStatus.val();
                 dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
             };
+
             this.problemGradeReport = function(selected) {
                 var errorMessage = gettext('Error generating problem grade report. Please try again.');
                 var learnerStatus = dataDownloadObj.$learnerStatus.val();
                 dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
             };
+
             this.ORADataReport = function(selected) {
                 var errorMessage = gettext('Error generating ORA data report. Please try again.');
                 dataDownloadObj.downloadCSV(selected, errorMessage, false);
             };
+
             this.downloadCSV = function(selected, errorMessage, learnerStatus) {
                 var url = selected.data('endpoint');
-                // var errorMessage = '';
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',
@@ -355,6 +342,7 @@
                     }
                 });
             };
+
             this.buildDataTable = function(data) {
                 var $tablePlaceholder, columns, feature, gridData, options;
                 dataDownloadObj.clear_display();
@@ -378,7 +366,7 @@
                     }
                     return results;
                 }());
-                gridData = data.students;
+                gridData = data.hasOwnProperty('students') ? data.students : data.certificates;
                 $tablePlaceholder = $('<div/>', {
                     class: 'slickgrid'
                 });
@@ -397,22 +385,6 @@
             this.instructor_tasks.task_poller.stop();
             return this.report_downloads.downloads_poller.stop();
         };
-
-        InstructorDashboardDataDownload.prototype.clear_display = function() {
-            this.$download_display_text.empty();
-            this.$download_display_table.empty();
-            this.$download_request_response_error.empty();
-            this.$reports_request_response.empty();
-            this.$reports_request_response_error.empty();
-            this.$certificate_display_table.empty();
-            $('.msg-confirm').css({
-                display: 'none'
-            });
-            return $('.msg-error').css({
-                display: 'none'
-            });
-        };
-
         return InstructorDashboardDataDownload;
     }());
 

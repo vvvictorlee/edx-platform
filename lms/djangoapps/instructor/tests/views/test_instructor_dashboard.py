@@ -146,8 +146,8 @@ class TestInstructorDashboard(ModuleStoreTestCase, LoginEnrollmentTestCase, XssT
         """
         Verify that the Data Download tab only shows up for certain roles
         """
-        download_section = '<li class="nav-item"><button type="button" class="btn-link data_download" '\
-                           'data-section="data_download">Data Download</button></li>'
+        download_section = '<li class="nav-item"><button type="button" class="btn-link data_download_2" '\
+                           'data-section="data_download_2">Data Download</button></li>'
         user = UserFactory.create(is_staff=access_role == 'global_staff')
         CourseAccessRoleFactory(
             course_id=self.course.id,

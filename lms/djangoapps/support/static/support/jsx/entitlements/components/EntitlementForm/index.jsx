@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Button, InputSelect, InputText, TextArea } from '@edx/paragon';
 import { formTypes } from '../../data/constants/formTypes';
 
-
 class EntitlementForm extends React.Component {
   constructor(props) {
     super(props);
