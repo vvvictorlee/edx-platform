@@ -303,10 +303,10 @@
                 exports: 'js/instructor_dashboard/student_admin',
                 deps: ['jquery', 'underscore', 'js/instructor_dashboard/util', 'string_utils']
             },
-            'js/instructor_dashboard/data_download': {
-                exports: 'js/instructor_dashboard/data_download',
-                deps: ['jquery', 'js/instructor_dashboard/util', 'string_utils', 'js/instructor_dashboard/instructor_dashboard']
-            },
+            // 'js/instructor_dashboard/data_download': {
+            //     exports: 'js/instructor_dashboard/data_download',
+            //     deps: ['jquery', 'js/instructor_dashboard/util', 'string_utils', 'js/instructor_dashboard/instructor_dashboard']
+            // },
             'js/instructor_dashboard/certificates': {
                 exports: 'js/instructor_dashboard/certificates',
                 deps: ['jquery', 'gettext', 'underscore']
