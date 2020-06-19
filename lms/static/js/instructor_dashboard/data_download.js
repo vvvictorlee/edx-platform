@@ -113,7 +113,6 @@
             };
 
             this.downloadCertificates = function(selected) {
-                // dataDownloadObj.clear_ui();
                 location.href = selected.data('endpoint') + '?csv=true';
             };
 

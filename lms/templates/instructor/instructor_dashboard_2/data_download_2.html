@@ -29,7 +29,12 @@ from openedx.core.djangolib.markup import HTML, Text
         width: 315px;
         height: 44px
     }
-
+ .data-download-container .message {
+    border-radius: 1px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-weight: 600;
+ }
 
 </style>
 
@@ -39,7 +44,6 @@ from openedx.core.djangolib.markup import HTML, Text
 
 <!--</main>-->
 <div class="data-download-container  action-type-container">
-    <!--    <div class="request-response-error msg msg-error copy" id="data-request-response-error"></div>-->
     <ul class="data-download-nav">
 
         <li class="nav-item ">
@@ -242,8 +246,8 @@ from openedx.core.djangolib.markup import HTML, Text
         %endif
     </section>
     %endif
-    <div class="request-response msg msg-confirm copy" id="report-request-response"></div>
-    <div class="request-response-error msg msg-error copy" id="report-request-response-error"></div>
+    <div class="request-response message msg-confirm copy" id="report-request-response"></div>
+    <div class="request-response-error message msg-error copy" id="report-request-response-error"></div>
 
 </div>
 
