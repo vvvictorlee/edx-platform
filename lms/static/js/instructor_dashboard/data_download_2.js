@@ -4,6 +4,7 @@
     'use strict';
     var DataDownload, DataDownloadCertificate, PendingInstructorTasks, ReportDownloads, statusAjaxError;
 
+    // eslint-disable-next-line no-unused-vars
     statusAjaxError = function() {
         return window.InstructorDashboard.util.statusAjaxError.apply(this, arguments);
     };
@@ -91,7 +92,6 @@
 
     DataDownload = (function() {
         function InstructorDashboardDataDownload($section) {
-          console.log('awais');
             var dataDownloadObj = this;
             this.$section = $section;
             this.$section.data('wrapper', this);
