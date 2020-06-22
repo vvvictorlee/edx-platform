@@ -147,12 +147,14 @@ define([
               dataDownload.listEnrolledPeople($selected);
               AjaxHelper.expectRequest(requests, 'POST', url);
               AjaxHelper.respondWithJson(requests, data);
+            // eslint-disable-next-line vars-on-top
               var dataTable = dataDownload.$certificate_display_table.html();
-              const existInHtml = function(value){
+            // eslint-disable-next-line vars-on-top
+              var existInHtml = function(value){
                 expect(dataTable.indexOf(data.feature_names[value]) !== -1).toBe(false);
                 expect(dataTable.indexOf(data.students[0][value]) !== -1).toBe(false);
               }
-              data.queried_features.forEach(existInHtml)
+              data.queried_features.forEach(existInHtml);
           });
 
 

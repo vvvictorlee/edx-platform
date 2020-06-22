@@ -65,13 +65,13 @@ from openedx.core.djangolib.markup import HTML, Text
 
     </ul>
     <section id="reports" class="idash-section tab-data" aria-labelledby="header-reports">
+        <h6 class="mb-15" id="header-reports">
+            <strong>${_("NOTE")}: </strong>
+            Please select the report type and then click Download Report button
+        </h6>
         <div class="mb-15">
 
             <div class="mb-5">
-                <p class="mb-15">
-                    <strong>${_("NOTE")}: </strong>
-                    Please select the report type and then click Download Report button
-                </p>
                 <select class="report-type selector">
                     <option value="gradingConfiguration"
                             data-endpoint="${ section_data['get_grading_config_url'] }">
@@ -163,10 +163,10 @@ from openedx.core.djangolib.markup import HTML, Text
     %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
     %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
     <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
-        <p class="mb-15">
+        <h6 class="mb-15" id="header-grading">
             <strong>${_("NOTE")}: </strong>
             Please select the report type and then click Download Report button
-        </p>
+        </h6>
         <select class="report-type selector mb-15">
             <option data-graderelated="true" value="gradeReport"
                     data-endpoint="${ section_data['calculate_grades_csv_url'] }">
@@ -195,10 +195,10 @@ from openedx.core.djangolib.markup import HTML, Text
     </section>
     %endif
     <section id="certificates" class="idash-section tab-data" aria-labelledby="header-certificates">
-        <p class="mb-15">
+        <h6 class="mb-15" id="header-certificates">
             <strong>${_("NOTE")}: </strong>
             Please select the report type and then click Download Report button
-        </p>
+        </h6>
 
         <select class="report-type selector">
             <option value="viewCertificates" data-csv="false"
@@ -217,10 +217,11 @@ from openedx.core.djangolib.markup import HTML, Text
         </div>
     </section>
     <section id="problem" class="idash-section tab-data" aria-labelledby="header-problem">
-        <p class="mb-15 problemResponses">${_("Select a problem to generate a CSV \
+        <h6 class="mb-20" id="header-problem">
+            ${_("Select a problem to generate a CSV \
             file that lists all student answers to the problem. You also select a section or chapter to include \
-            results of all problems in that section or chapter.")}</p>
-
+            results of all problems in that section or chapter.")}
+        </h6>
         <div class="mb-15 problems">
             ${static.renderReact(
             component="ProblemBrowser",
