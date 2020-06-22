@@ -343,10 +343,9 @@ class CourseMode(models.Model):
 
         If no modes have been set in the table, returns the default mode
 
-        Arguments:
+        Keyword Arguments:
             course_id (CourseKey): Search for course modes for this course.
 
-        Keyword Arguments:
             include_expired (bool): If True, expired course modes will be included
             in the returned JSON data. If False, these modes will be omitted.
 
@@ -370,10 +369,10 @@ class CourseMode(models.Model):
             course_id = course.id
             course = None
 
-        if course_id is not None:
-            found_course_modes = cls.objects.filter(course_id=course_id)
+        if course is not None:
+            found_course_modes = course.modes.all()
         else:
-            found_course_modes = course.modes
+            found_course_modes = cls.objects.filter(course_id=course_id)
 
         # Filter out expired course modes if include_expired is not set
         if not include_expired:
