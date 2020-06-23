@@ -169,7 +169,6 @@ define([
               var data = {
                   status: 'The Problem report is being created'
               };
-              // spyOn($, 'data').and.returnValue(url);
               spyOn($.fn, 'data').and.returnValue(url);
               dataDownload.$downloadProblemReport.trigger('click');
               AjaxHelper.expectRequest(requests, 'POST', url);
@@ -198,7 +197,8 @@ define([
               var data = {
                   status: 'The Course grade report is being created'
               };
-              dataDownload.gradeReport($selected);
+              spyOn($.fn, 'data').and.returnValue(url);
+              dataDownload.$gradeReportDownload.trigger('click');
               AjaxHelper.expectRequest(requests, 'POST', url);
               AjaxHelper.respondWithJson(requests, data);
               expect(dataDownload.$reports_request_response.text()).toBe(data.status);

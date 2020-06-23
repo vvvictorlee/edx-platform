@@ -111,6 +111,9 @@ from openedx.core.djangolib.markup import HTML, Text
                             data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
                         report
                     </option>
+                    <option data-graderelated="true" value="problemGradeReport"
+                    data-endpoint="${ section_data['problem_grade_report_url'] }">Problem Grade report
+                    </option>
                     %endif
                     %endif
                 </select>
@@ -161,39 +164,6 @@ from openedx.core.djangolib.markup import HTML, Text
 
     </section>
     %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
-    %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
-    <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
-        <h6 class="mb-15" id="header-grading">
-            <strong>${_("NOTE")}: </strong>
-            Please select the report type and then click Download Report button
-        </h6>
-        <select class="report-type selector mb-15">
-            <option data-graderelated="true" value="gradeReport"
-                    data-endpoint="${ section_data['calculate_grades_csv_url'] }">
-                Grade report
-            </option>
-            <option data-graderelated="true" value="problemGradeReport"
-                    data-endpoint="${ section_data['problem_grade_report_url'] }">
-                Problem Grade report
-            </option>
-
-        </select>
-        <br>
-
-        <p>Learner status</p>
-        <select class="learner-status selector">
-            <option value="true">Verified Learners Only</option>
-            <option value="false">All Learners</option>
-        </select>
-
-        <button class="mb-20 btn-brand download-report" type="button" value="download report">Download
-            report
-        </button>
-        <div>
-            <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
-        </div>
-    </section>
-    %endif
     <section id="certificate" class="idash-section tab-data" aria-labelledby="header-cert">
         <h6 class="mb-15" id="header-cert">
             <strong>${_("NOTE")}: </strong>
@@ -246,6 +216,29 @@ from openedx.core.djangolib.markup import HTML, Text
         </p>
         %endif
     </section>
+    %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
+    <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
+        <h6 class="mb-15" id="header-grading">
+            <strong>${_("NOTE")}: </strong>
+            Please select learner status and then click Download Report button to download Course Grade Report
+        </h6>
+        <br>
+
+        <p>Learner status</p>
+        <select class="learner-status selector">
+            <option value="true">Verified Learners Only</option>
+            <option value="false">All Learners</option>
+        </select>
+
+        <button class="mb-20 btn-brand grade-report-download" type="button"
+                value="download report"
+                data-endpoint="${ section_data['calculate_grades_csv_url'] }">Download Report
+        </button>
+        <div>
+            <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>
+        </div>
+    </section>
+    %endif
     %endif
     <div class="request-response message msg-confirm copy" id="report-request-response"></div>
     <div class="request-response-error message msg-error copy" id="report-request-response-error"></div>
@@ -292,7 +285,7 @@ from openedx.core.djangolib.markup import HTML, Text
 </div>
 
 %if settings.FEATURES.get('ENABLE_INSTRUCTOR_BACKGROUND_TASKS'):
-<div class="running-tasks-container data_download_2 action-type-container">
+<div id='data_download_2' class="running-tasks-container data_download_2 action-type-container">
     <hr>
     <h3 class="hd hd-3">${_("Pending Tasks")}</h3>
     <div class="running-tasks-section">

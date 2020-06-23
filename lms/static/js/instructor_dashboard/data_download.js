@@ -31,6 +31,7 @@
             this.report_downloads = new (ReportDownloads())(this.$section);
             this.instructor_tasks = new (PendingInstructorTasks())(this.$section);
             this.$download_report = $('.download-report');
+            this.$gradeReportDownload = $('.grade-report-download');
             this.$report_type_selector = $('.report-type');
             this.$selection_informations = $('.selectionInfo');
             this.$certificate_display_table = $('.certificate-data-display-table');
@@ -299,16 +300,15 @@
                 });
             };
 
-            this.gradeReport = function(selected) {
+            this.$gradeReportDownload.click(function() {
                 var errorMessage = gettext('Error generating grades. Please try again.');
                 var learnerStatus = dataDownloadObj.$learnerStatus.val();
-                dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
-            };
+                dataDownloadObj.downloadCSV($(this), errorMessage, learnerStatus);
+            });
 
             this.problemGradeReport = function(selected) {
                 var errorMessage = gettext('Error generating problem grade report. Please try again.');
-                var learnerStatus = dataDownloadObj.$learnerStatus.val();
-                dataDownloadObj.downloadCSV(selected, errorMessage, learnerStatus);
+                dataDownloadObj.downloadCSV(selected, errorMessage, false);
             };
 
             this.ORADataReport = function(selected) {
