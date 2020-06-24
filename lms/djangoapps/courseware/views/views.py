@@ -1163,6 +1163,7 @@ def _progress(request, course_key, student_id):
     # student instead of request.user in the rest of the function.
 
     course_grade = CourseGradeFactory().read(student, course)
+
     courseware_summary = list(course_grade.chapter_grades.values())
 
     studio_url = get_studio_url(course, 'settings/grading')
