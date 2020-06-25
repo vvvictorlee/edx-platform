@@ -170,6 +170,8 @@ def create_account_with_params(request, params):
     is_sso = is_third_party_auth_enabled and (pipeline.running(request) or third_party_auth_credentials_in_api)
     if is_sso:
         params["password"] = generate_password()
+
+    if is_registration_api_v1(request) or is_sso:
         if 'confirm_email' in extra_fields:
             del extra_fields['confirm_email']
 
