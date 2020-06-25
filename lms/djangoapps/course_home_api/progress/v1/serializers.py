@@ -10,4 +10,5 @@ class ProgressTabSerializer(serializers.Serializer):
     """
     Serializer
     """
-    test = serializers.BooleanField()
+    user = serializers.CharField()
+    has_access = serializers.BooleanField()
