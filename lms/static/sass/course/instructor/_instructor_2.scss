@@ -3047,3 +3047,29 @@ div.staff_actions {
     color: theme-color("success");
   }
 }
+
+.action-type-container p {
+    line-height: 2;
+}
+
+.mb-15 {
+    margin-bottom: 20px;
+}
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.download-report {
+    margin-left: 10px;
+}
+
+.selector {
+    width: 315px;
+    height: 44px
+}
+ .data-download-container .message {
+    border-radius: 1px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-weight: 600;
+ }
