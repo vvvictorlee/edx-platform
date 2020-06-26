@@ -12,3 +12,4 @@ class ProgressTabSerializer(serializers.Serializer):
     """
     user = serializers.CharField()
     has_access = serializers.BooleanField()
+    email = serializers.CharField()

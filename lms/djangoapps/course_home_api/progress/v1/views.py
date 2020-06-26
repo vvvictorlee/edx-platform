@@ -11,7 +11,7 @@ from opaque_keys.edx.keys import CourseKey
 
 from lms.djangoapps.course_home_api.progress.v1.serializers import ProgressTabSerializer
 from lms.djangoapps.courseware.courses import get_course_with_access
-from openedx.features.content_type_gating.models import ContentTypeGatingConfig
+from lms.djangoapps.courseware.masquerade import setup_masquerade
 from lms.djangoapps.courseware.access import has_access
 
 
@@ -46,29 +46,28 @@ class ProgressTabView(RetrieveAPIView):
         course_key_string = kwargs.get('course_key_string')
         course_key = CourseKey.from_string(course_key_string)
 
-        # leaving this commented out for ease of use
-        # if not course_home_mfe_dates_tab_is_active(course_key):
-        #     return Response(status=status.HTTP_404_NOT_FOUND)
-
-        learner_is_full_access = not ContentTypeGatingConfig.enabled_for_enrollment(
-            user=request.user,
-            course_key=course_key,
-        )
-
         # Enable NR tracing for this view based on course
         monitoring_utils.set_custom_metric('course_id', course_key_string)
         monitoring_utils.set_custom_metric('user_id', request.user.id)
         monitoring_utils.set_custom_metric('is_staff', request.user.is_staff)
 
+        _, request.user = setup_masquerade(
+            request,
+            course_key,
+            staff_access=has_access(request.user, 'staff', course_key),
+            reset_masquerade_data=True
+        )
+
         course = get_course_with_access(request.user, 'load', course_key, check_if_enrolled=False)
         access = bool(has_access(request.user, 'load', course))
 
+        print(request.user.email)
         data = {
             'user': request.user,
             'has_access': access,
+            'email': request.user.email,
         }
-        context = self.get_serializer_context()
-        context['learner_is_full_access'] = learner_is_full_access
-        serializer = self.get_serializer_class()(data, context=context)
+
+        serializer = self.get_serializer(data)
 
         return Response(serializer.data)
