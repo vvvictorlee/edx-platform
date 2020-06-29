@@ -71,8 +71,8 @@ def is_registration_api_v1(request):
 
 def is_sso_request(request):
     """
-    Checks if registration api is v1
-    :param request:
+    Checks registration request is single sign on request.
+    :param request: request Object:
     :return: Bool
     """
     return third_party_auth.is_enabled() and third_party_auth.pipeline.running(request) or 'provider' in request.POST
